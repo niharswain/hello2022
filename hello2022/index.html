@@ -1,0 +1,30 @@
+<html>
+<head>
+  <title>TATA Tech Interview</title>
+</head>
+<style>
+h1 {
+    color: darkblue;
+    font-family:arial, sans-serif;
+    font-weight: lighter;
+} 
+</style>
+
+<body>
+
+<div align="center">
+<h1>Welcome to 2022</h1>
+<p id="userAgent"></p>
+<script>
+        // Fetch user agent information from the server and display it
+    fetch('/user-agent')
+        .then(response => response.text())
+        .then(userAgent => {
+            document.getElementById('userAgent').textContent = userAgent;
+        })
+        .catch(error => console.error('Error fetching user agent:', error));
+</script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+trigger:
+- main
+
+pool:
+  name: tatapool
+
+steps:
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Azure subscription 1 (6af80bee-c2ac-45d4-96a9-6c7990a57d53)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      docker build -t hello2022acr.azurecr.io/hello2022:tag hello2022
+      az acr login -n hello2022acr
+      docker push hello2022acr.azurecr.io/hello2022:tag
+
+- script: cat 01_kubernetes_aks/app-deploy.yaml
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: 'Azure subscription 1 (6af80bee-c2ac-45d4-96a9-6c7990a57d53)'
+    azureResourceGroup: 'tata_rg'
+    kubernetesCluster: 'test_aks_tata'
+    useClusterAdmin: true
+    namespace: 'default'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: '01_kubernetes_aks'
+    secretType: 'dockerRegistry'
+    containerRegistryType: 'Azure Container Registry'
+    azureSubscriptionEndpointForSecrets: 'Azure subscription 1 (6af80bee-c2ac-45d4-96a9-6c7990a57d53)'
+    azureContainerRegistry: 'hello2022acr.azurecr.io'
+    forceUpdate: false
+

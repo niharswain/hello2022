@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello2022
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello2022
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: hello2022
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: hello2022
+        image: hello2022acr.azurecr.io/hello2022:tag
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello2022
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: hello2022
+
